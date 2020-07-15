@@ -30,7 +30,7 @@ class Autodrone:
     def start(self):
         self.takeOff()
         self.hovering()
-        self.goFront(2.0)
+        self.goFront(2.2)
         
     def forWhile(self,cmd,x):
         for i in range(x, 0, -1):
