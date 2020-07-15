@@ -148,7 +148,7 @@ class Autodrone:
         
     
     def findInner(self,mode,cnt): 
-        #self.camera.capture("./capture_{}.jpg".format(self.idx))
+        self.camera.capture("./{}_{}.jpg".format(mode,cnt))
         img = cv2.imread("./{}_{}.jpg".format(mode,cnt), cv2.COLOR_BGR2HSV)
         img=cv2.flip(img,0)
         img = cv2.resize(img, dsize=(960, 720), interpolation=cv2.INTER_AREA)
@@ -184,8 +184,8 @@ class Autodrone:
             print(box)#box[0]내부 가장 왼쪽 아래, box[3]내부 가장 오른쪽 아래 좌표
             cX=int(mmt['m10']/mmt['m00'])
             cY=int(mmt['m01']/mmt['m00'])
-            print(cX,cY)
-            self.goRight((cX-480)*0.026)
+            print(cX,cY,"Move: ",(cX-480)*0.026)
+            #self.goRight((cX-480)*0.026)
             return True
 
         #초록 내부 찾지 못함
@@ -199,8 +199,8 @@ class Autodrone:
         self.camera.capture("./{}_{}.jpg".format(mode,self.idx))
         img = cv2.imread("./{}_{}.jpg".format(mode,self.idx), cv2.COLOR_BGR2HSV)
         img = cv2.resize(img, dsize=(960, 720), interpolation=cv2.INTER_AREA)
-  
-        return self.getColorRate(img),self.idx
+        r,b,g=self.getColorRate(img)
+        return r,b,g,self.idx
     
     def checkColor(self, color, r,b,g,cnt,mode):
         if(color==1 and r>g):
@@ -215,37 +215,38 @@ class Autodrone:
         if(color==3 and (g>r or g>b)):
             if(self.findInner(mode,cnt)==True):
                 takePicture("FIND RING")
-                self.goFront(1.0)
-                self.landing()
+                self.goUp(-0.25)
+                self.goFront(1.5)
+                return True
             
         return False
     
     def findColor(self,mode,color):
-        hlist=[70,80,90,105,115,130,140,150]
+        hlist=[88,119,156]
         alist=[-30,30,30]
+        wlist=[0.2,0,-0.2]
         
         for h in hlist:
             self.go(h)
             time.sleep(0.1)
-            r,b,g,cnt=self.takePicture(mode+str(h))
+            r,b,g,cnt=self.takePicture(mode)
             print("R: ",r," B: ",b,"G: ",g)
             
-            if(checkColor(color,r,b,g,cnt,mode+str(h))==True):
+            if(self.checkColor(color,r,b,g,cnt,mode)==True):
                 break
                 
-            for a in alist:
-                self.spinLeft(a)
+            for a in range(3):
+                self.spinLeft(alist[a])
                 time.sleep(0.1)
-                r,b,g,cnt=self.takePicture(mode+str(a))
+                r,b,g,cnt=self.takePicture(mode)
                 print("R: ",r," B: ",b,"G: ",g)
                 
-                if(checkColor(color,r,b,g,cnt,mode+str(a))==True):
-                    self.spinLeft(-a)
+                if(self.checkColor(color,r,b,g,cnt,mode)==True):
+                    self.spinLeft(alist[a])
+                    self.goRight(wlist[a])
                     break
                 
         return False
-
-
   
                 
     def driving(self):
@@ -254,8 +255,8 @@ class Autodrone:
         colors=[1,3,1,3,2]#1 Red, 2 Blue, 3 Green
         
         for i in range(5):
-            self.findColor(order[i],color[i])
-        
+            self.findColor(orders[i],colors[i])
+
 
 myDrone=Autodrone()
 myDrone.driving()
