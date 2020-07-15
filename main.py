@@ -8,11 +8,6 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 
 
-#실시간으로 영상의 프레임 받아옴
-#초록색이 인지된다면 -> 인지 print,초록 박스의 내부 중앙 좌표가 화면의 중앙이라면-> 직진
-#                          중앙이 아니라면 ->좌우 확인 해서 x좌표 중앙에되게 하고 위아래 확인해서 y좌표로 이동->직
-#       안된다면 -> 직진/회전 반복 진
-
 height=0
 def eventAltitude(altitude):
     global height
@@ -255,7 +250,9 @@ class Autodrone:
         colors=[1,3,1,3,2]#1 Red, 2 Blue, 3 Green
         
         for i in range(5):
-            self.findColor(orders[i],colors[i])
+            if(self.findColor(orders[i],colors[i])==False):
+                self.landing()
+                break
 
 
 myDrone=Autodrone()
