@@ -30,7 +30,7 @@ class Autodrone:
     def start(self):
         self.takeOff()
         self.hovering()
-        self.goFront(2.2)
+        self.goFront(2.5)
         
     def forWhile(self,cmd,x):
         for i in range(x, 0, -1):
@@ -200,7 +200,7 @@ class Autodrone:
     def checkColor(self, color, r,b,g,cnt,mode):
         if(color==1 and r>g):
             self.spinLeft(90)
-            self.goFront(1.0)
+            self.goFront(2.0)
             return True
             
         if(color==2 and b>g):
@@ -219,7 +219,7 @@ class Autodrone:
     def findColor(self,mode,color):
         hlist=[88,119,156]
         alist=[-30,30,30]
-        wlist=[0.2,0,-0.2]
+        wlist=[0.5,0,-0.5]
         
         for h in hlist:
             self.go(h)
@@ -251,8 +251,9 @@ class Autodrone:
         
         for i in range(5):
             if(self.findColor(orders[i],colors[i])==False):
-                self.landing()
-                break
+                if(self.findColor(orders[i],colors[i])==False):
+                    self.landing()
+                    break
 
 
 myDrone=Autodrone()
