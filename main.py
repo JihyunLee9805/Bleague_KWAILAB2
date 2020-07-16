@@ -30,7 +30,7 @@ class Autodrone:
     def start(self):
         self.takeOff()
         self.hovering()
-        self.goFront(2.5)
+        self.goFront(2.6)
         
     def forWhile(self,cmd,x):
         for i in range(x, 0, -1):
@@ -211,13 +211,13 @@ class Autodrone:
             if(self.findInner(mode,cnt)==True):
                 takePicture("FIND RING")
                 self.goUp(-0.25)
-                self.goFront(1.5)
+                self.goFront(1.6)
                 return True
             
         return False
     
     def findColor(self,mode,color):
-        hlist=[88,119,156]
+        hlist=[88,119,170]
         alist=[-30,30,30]
         wlist=[0.5,0,-0.5]
         
